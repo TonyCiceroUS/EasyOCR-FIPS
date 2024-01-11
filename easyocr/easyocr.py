@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from .recognition import get_recognizer, get_text
-from .utils import group_text_box, get_image_list, calculate_md5, get_paragraph,\
+from .utils import group_text_box, get_image_list, get_paragraph,\
                    download_and_unzip, printProgressBar, diff, reformat_input,\
                    make_rotated_img_list, set_result_with_confidence,\
                    reformat_input_batched, merge_to_free
@@ -176,18 +176,7 @@ class Reader(object):
                     LOGGER.warning('Downloading recognition model, please wait. '
                                    'This may take several minutes depending upon your network connection.')
                     download_and_unzip(model['url'], model['filename'], self.model_storage_directory, verbose)
-                    assert calculate_md5(model_path) == model['md5sum'], corrupt_msg
                     LOGGER.info('Download complete.')
-                elif calculate_md5(model_path) != model['md5sum']:
-                    if not self.download_enabled:
-                        raise FileNotFoundError("MD5 mismatch for %s and downloads disabled" % model_path)
-                    LOGGER.warning(corrupt_msg)
-                    os.remove(model_path)
-                    LOGGER.warning('Re-downloading the recognition model, please wait. '
-                                   'This may take several minutes depending upon your network connection.')
-                    download_and_unzip(model['url'], model['filename'], self.model_storage_directory, verbose)
-                    assert calculate_md5(model_path) == model['md5sum'], corrupt_msg
-                    LOGGER.info('Download complete')
             self.setLanguageList(lang_list, model)
 
         else: # user-defined model
@@ -251,17 +240,7 @@ class Reader(object):
                 LOGGER.warning('Downloading detection model, please wait. '
                                'This may take several minutes depending upon your network connection.')
                 download_and_unzip(self.detection_models[self.detect_network]['url'], self.detection_models[self.detect_network]['filename'], self.model_storage_directory, self.verbose)
-                assert calculate_md5(detector_path) == self.detection_models[self.detect_network]['md5sum'], corrupt_msg
                 LOGGER.info('Download complete')
-            elif calculate_md5(detector_path) != self.detection_models[self.detect_network]['md5sum']:
-                if not self.download_enabled:
-                    raise FileNotFoundError("MD5 mismatch for %s and downloads disabled" % detector_path)
-                LOGGER.warning(corrupt_msg)
-                os.remove(detector_path)
-                LOGGER.warning('Re-downloading the detection model, please wait. '
-                               'This may take several minutes depending upon your network connection.')
-                download_and_unzip(self.detection_models[self.detect_network]['url'], self.detection_models[self.detect_network]['filename'], self.model_storage_directory, self.verbose)
-                assert calculate_md5(detector_path) == self.detection_models[self.detect_network]['md5sum'], corrupt_msg
         else:
             raise RuntimeError("Unsupport detector network. Support networks are {}.".format(', '.join(self.support_detection_network)))
         

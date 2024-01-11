@@ -630,13 +630,6 @@ def download_and_unzip(url, filename, model_storage_directory, verbose=True):
         zipObj.extract(filename, model_storage_directory)
     os.remove(zip_path)
 
-def calculate_md5(fname):
-    hash_md5 = hashlib.md5()
-    with open(fname, "rb") as f:
-        for chunk in iter(lambda: f.read(4096), b""):
-            hash_md5.update(chunk)
-    return hash_md5.hexdigest()
-
 def diff(input_list):
     return max(input_list)-min(input_list)
 
